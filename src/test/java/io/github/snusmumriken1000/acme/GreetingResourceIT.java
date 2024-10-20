@@ -1,4 +1,4 @@
-package org.acme;
+package io.github.snusmumriken1000;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 

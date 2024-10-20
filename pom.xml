@@ -3,9 +3,32 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.acme</groupId>
+    <groupId>io.github.snusmumriken1000</groupId>
     <artifactId>q-task</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.0.1</version>
+    <name>q-task</name>
+    <description>q-task description</description>
+    <url>url</url>
+    <licenses>
+        <license>
+            <name></name>
+            <url></url>
+            <distribution></distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id></id>
+            <name></name>
+            <email></email>
+        </developer>
+    </developers>
+    <scm>
+        <url></url>
+        <connection></connection>
+        <developerConnection></developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
     <properties>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
@@ -17,6 +40,7 @@
         <quarkus.platform.version>3.15.1</quarkus.platform.version>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.3.1</surefire-plugin.version>
+        <gpg.keyname>A515596FFBCC092387D8FA40814C847FE53B62FA</gpg.keyname>
     </properties>
 
     <dependencyManagement>
@@ -51,6 +75,18 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <!-- Upload to maven central -->
+    <distributionManagement>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <plugins>
@@ -107,9 +143,72 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+
+            <!-- maven centralへのアップロード -->
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.6.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                </configuration>
+            </plugin>
+            <!-- javadocの生成 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <gpgKeyname>${gpg.keyname}</gpgKeyname>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- GPG　key -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                            <gpgKeyname>${gpg.keyname}</gpgKeyname>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-
     <profiles>
         <profile>
             <id>native</id>

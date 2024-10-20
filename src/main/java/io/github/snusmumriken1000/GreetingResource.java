@@ -1,4 +1,4 @@
-package org.acme;
+package io.github.snusmumriken1000;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
